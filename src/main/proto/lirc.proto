@@ -1,0 +1,67 @@
+package proto;
+
+enum Signal {
+    BEGIN = 1;
+    END = 2;
+    NONE = 3;
+}
+
+enum Color {
+    RED = 1;
+    GREEN = 2;
+    YELLOW = 3;
+    BLUE = 4;
+}
+
+enum Direction {
+	UP = 1;
+	DOWN = 2;
+	LEFT = 3;
+	RIGHT = 4;
+}
+
+enum Number {
+	ZERO = 1;
+	ONE = 2;
+	TWO = 3;
+	THREE = 4;
+	FOUR = 5;
+	FIVE = 6;
+	SIX = 7;
+	SEVEN = 8;
+	EIGHT = 9;
+	NINE = 10;
+}
+
+message Button {
+	enum Type {
+		LIRC = 1;
+		COLOR = 2;
+		NUMBER = 3;
+		DIRECTION = 4;
+	}
+
+	required Signal signal = 1;
+	required Type type = 2;
+	optional LircButton lircButton = 3;
+	optional ColorButton colorButton = 4;
+	optional NumberButton numberButton = 5;
+	optional DirectionButton directionButton = 6;
+}
+
+message LircButton {
+	required string remote = 1;
+	required string code = 2;
+}
+
+message ColorButton {
+	required Color color = 1;
+}
+
+message NumberButton {
+	required Number number = 1;
+}
+
+message DirectionButton {
+	required Direction direction = 1;
+}

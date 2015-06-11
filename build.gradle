@@ -1,0 +1,49 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'protobuf'
+apply plugin: 'maven'
+
+group = 'com.github.boukefalos'
+archivesBaseName = 'jliblirc'
+version = '1.1'
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.2'
+}
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+		classpath 'com.andrewkroh.gradle:gradle-protobuf-plugin:0.4.0'
+	}
+}
+
+uploadArchives {
+	repositories.mavenDeployer {
+		repository(url: uri('.maven'))
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = [ 'src/main/java' ]
+		}
+	}
+	generated {
+		java {
+			srcDirs = [ 'build/generated/java' ]
+		}
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {	
+	compile 'org.ostermiller:utils:1.07.00'
+}
