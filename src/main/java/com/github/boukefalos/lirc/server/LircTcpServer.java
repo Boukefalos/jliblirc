@@ -25,6 +25,6 @@ public class LircTcpServer extends TcpServer implements LircServer {
 	}
 
 	public void receive(byte[] buffer) {
-		ServerHelper.receive(lirc, buffer);
+		ServerHelper.decode(lirc, buffer);
 	}
 }

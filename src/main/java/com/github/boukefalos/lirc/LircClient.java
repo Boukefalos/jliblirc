@@ -17,37 +17,24 @@
 package com.github.boukefalos.lirc;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Scanner;
 
-import base.receiver.Receiver;
 import base.server.channel.TcpClient;
 import base.work.Listen;
 
-public class LircClient extends TcpClient implements Receiver {
+public class LircClient extends TcpClient {
 	public static final int BUFFER_SIZE = 1024;
     public static final String IP = "localhost";
     public static final int PORT = 8765;
-
-    protected ArrayList<Listen<Object>> listenList;
     protected String send;
+	protected Listen<Object> listen;
 
-	public LircClient() {
-        super(IP, PORT, BUFFER_SIZE);
+    public LircClient(Listen<Object> listen) {
+    	super(IP, PORT, BUFFER_SIZE);
         //send = Native.getValue(Registry.CURRENT_USER, "Software\\LIRC", "password");
-        listenList = new ArrayList<Listen<Object>>();
-        register(this);
-    }
+		this.listen = listen;
+	}
 
-     public void register(Listen<Object> listen) {
-        listenList.add(listen);
-    }
-
-    public void remove(Listen<String[]> listen) {
-        listenList.remove(listen);
-    }
-
-    public void send(LircButton button) {
+	public void send(LircButton button) {
         send(button, 0);
     }
 
@@ -63,26 +50,7 @@ public class LircClient extends TcpClient implements Receiver {
 		}
     }
 
-	public void receive(byte[] buffer) {
-		receive(new String(buffer).trim());
-	}
-
-	protected void receive(String line) {
-        if (!line.startsWith("BEGIN")) {        	
-        	Scanner scanner = new Scanner(line);
-        	receive(scanner);
-        	scanner.close();
-        }
-	}
-
-	protected void receive(Scanner scanner) {
-        scanner.next();
-        scanner.next();
-        String code = scanner.next();
-        String remote = scanner.next();
-        for (Listen<Object> lircbuttonListener : listenList) {
-        	// Need to pass as String to assure consistent hash
-        	lircbuttonListener.add(remote + " " + code);
-        }
-	}
+    public void input(byte[] buffer) {
+    	listen.add(buffer);
+    }
 }

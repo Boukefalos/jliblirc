@@ -20,34 +20,31 @@ import com.github.boukefalos.lirc.util.SignalObject;
 public class ServerHelper {
 	protected static Logger logger = LoggerFactory.getLogger(ServerHelper.class);
 
-	public static void receive(Lirc lirc, byte[] buffer) {
+	public static SignalObject<?> decode(Lirc lirc, byte[] buffer) {
 		ByteArrayInputStream input = new ByteArrayInputStream(buffer);
 		try {
 			Button button = Button.parseDelimitedFrom(input);
 			Type type = button.getType();
 			Signal signal = button.getSignal();
-			// Use switch-case statements
-			if (button.hasColorButton()) {
-				Color color = button.getColorButton().getColor();
-				lirc.add(new SignalObject<Object>(signal, color));
-			}
-			if (button.hasDirectionButton()) {
-				Direction direction = button.getDirectionButton().getDirection();
-				lirc.add(new SignalObject<Direction>(signal, direction));				
-			}
-			if (button.hasNumberButton()) {
-				Number number = button.getNumberButton().getNumber();
-				lirc.add(new SignalObject<Number>(signal, number));
-			}
-			if (button.hasLircButton()) {
-				String remote = button.getLircButton().getRemote();
-				String code = button.getLircButton().getCode();
-				LircButton lircButton = new LircButton(remote, code);
-				lirc.add(new SignalObject<LircButton>(signal, lircButton));
+			switch (type) {
+				case COLOR:
+					Color color = button.getColorButton().getColor();
+					return new SignalObject<Color>(signal, color);
+				case DIRECTION:
+					Direction direction = button.getDirectionButton().getDirection();
+					return new SignalObject<Direction>(signal, direction);
+				case NUMBER:
+					Number number = button.getNumberButton().getNumber();
+					return new SignalObject<Number>(signal, number);
+				case LIRC:
+					String remote = button.getLircButton().getRemote();
+					String code = button.getLircButton().getCode();
+					LircButton lircButton = new LircButton(remote, code);
+					return new SignalObject<LircButton>(signal, lircButton);
 			}
 		} catch (IOException e) {
 			logger.error("Failed to parse input");
-			return;
 		}
+		return null;
 	}
 }

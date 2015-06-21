@@ -19,19 +19,13 @@ public class UdpImplementation extends UdpSender implements Lirc {
 	}
 
 	@Override
-	public void register(Listen<Object> listen) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void add(Object object) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void input(Object object) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void register(Listen<Object> listen) {
 		// TODO Auto-generated method stub
 		
 	}

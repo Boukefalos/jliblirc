@@ -1,15 +1,11 @@
 package com.github.boukefalos.lirc;
 
-import java.io.IOException;
 import java.util.Properties;
 
-import org.picocontainer.DefaultPicoContainer;
-import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.Parameter;
 import org.picocontainer.parameters.ConstantParameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import base.loader.AbstractLoader;
 import base.work.Work;
 
 import com.github.boukefalos.lirc.client.LircTcpClient;
@@ -20,14 +16,11 @@ import com.github.boukefalos.lirc.server.LircServer;
 import com.github.boukefalos.lirc.server.LircTcpServer;
 import com.github.boukefalos.lirc.server.LircUdpServer;
 
-public class Loader {
-    protected static final String PROPERTIES_FILE = "Lirc.properties";
-	protected Logger logger = LoggerFactory.getLogger(Loader.class);
-    protected MutablePicoContainer pico;
+public class Loader extends AbstractLoader {
+    protected static final String PROPERTIES_FILE = "lirc.properties";
 
 	public Loader(Properties properties) {
-		/* Initialise container */
-		pico = new DefaultPicoContainer();
+		super();
 	
 		/* Add implementation */
 		switch (properties.getProperty("implementation")) {
@@ -71,19 +64,6 @@ public class Loader {
 			}
 			
 		}
-	}
-
-    public static Loader getLoader() throws IOException {
-    	return getLoader(PROPERTIES_FILE);    	
-    }
-
-	public static Loader getLoader(String propertiesFile) throws IOException {
-		/* Read properties file */
-		Properties properties = new Properties();
-		properties.load(Loader.class.getClassLoader().getResourceAsStream(propertiesFile));
-
-		/* Initialise loader */
-		return new Loader(properties);
 	}
 
     public Lirc getLirc() {

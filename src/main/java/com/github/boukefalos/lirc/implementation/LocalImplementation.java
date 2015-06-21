@@ -17,6 +17,7 @@
 package com.github.boukefalos.lirc.implementation;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import lirc.Lirc.Color;
 import lirc.Lirc.Direction;
@@ -35,12 +36,11 @@ import com.github.boukefalos.lirc.util.SignalObject;
 public class LocalImplementation extends Listen<Object> implements Lirc {
 	protected ArrayList<Listen<Object>> listenList;
     protected Multiplexer<String> multiplexer;
-    protected LircClient lircService;
+    protected LircClient lircClient;
 
     public LocalImplementation() {
     	listenList = new ArrayList<Listen<Object>>();
-        lircService = new LircClient();
-        lircService.register(this);
+        lircClient = new LircClient(this);
         multiplexer = new Multiplexer<String>();
         multiplexer.register(this);
     }
@@ -54,27 +54,35 @@ public class LocalImplementation extends Listen<Object> implements Lirc {
     }
 
     public void activate() throws ActivateException {
-        logger.debug("Activate " + getClass().getSimpleName());
-    	lircService.start();
+    	lircClient.start();
         super.activate();        
     }
 
     public void deactivate() throws DeactivateException {
-        logger.debug("Deactivate LircDevice");
         super.deactivate();
-        lircService.stop();
+        lircClient.stop();
         multiplexer.stop();
     }
 
     public void exit() {
-        logger.debug("Exit LircDevice");
         super.exit();
-        lircService.exit();
+        lircClient.exit();
         multiplexer.exit();
     }
 
-	public void input(String input) {        
-		multiplexer.add(input);		
+	public void input(byte[] buffer) {
+		String line = new String(buffer).trim();
+        if (!line.startsWith("BEGIN")) {        	
+        	Scanner scanner = new Scanner(line);
+            scanner.next();
+            scanner.next();
+            String code = scanner.next();
+            String remote = scanner.next();
+
+        	// Need to pass as String to assure consistent hash
+        	multiplexer.add(remote + " " + code);
+        	scanner.close();
+        }
 	}
 
 	public void input(SignalObject<Object> signalObject) {

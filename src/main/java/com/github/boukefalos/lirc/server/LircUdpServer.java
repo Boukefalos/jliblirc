@@ -19,6 +19,6 @@ public class LircUdpServer extends UdpServer implements LircServer {
 	}
 
 	protected void receive(byte[] buffer) {		
-		ServerHelper.receive(lirc, buffer);
+		ServerHelper.decode(lirc, buffer);
 	}
 }

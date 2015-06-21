@@ -4,22 +4,23 @@ import lirc.Lirc.Signal;
 import base.exception.worker.ActivateException;
 import base.work.Listen;
 
+import com.github.boukefalos.lirc.Lirc;
 import com.github.boukefalos.lirc.LircButton;
 import com.github.boukefalos.lirc.implementation.LocalImplementation;
 import com.github.boukefalos.lirc.util.SignalObject;
 
-public class Test extends Listen<Object> {
+public class TestLocal extends Listen<Object> {
 	
 	public static void main(String[] args) {
-		new Test().start();
+		new TestLocal().start();
 		try {
 			Thread.sleep(1000000);
 		} catch (InterruptedException e) {}
 	}
 
-	protected LocalImplementation lirc;
+	protected Lirc lirc;
 
-	public Test() {
+	public TestLocal() {
 		lirc = new LocalImplementation();
 		lirc.register(this);
 	}
@@ -34,10 +35,13 @@ public class Test extends Listen<Object> {
 		super.start();
 	}
 
-	public void input(SignalObject<LircButton> lircButtonSignal) {	
-		Signal signal = lircButtonSignal.signal;
-		LircButton lircButton = lircButtonSignal.object;
-        String code = lircButton.code;
-        logger.error(signal.name() + " : " + code + " @ " + lircButton.remote);
+	public void input(SignalObject<LircButton> lircButtonSignal) {
+		 Object object = lircButtonSignal.object;
+		if (object instanceof LircButton) {
+			Signal signal = lircButtonSignal.signal;
+			LircButton lircButton = lircButtonSignal.object;
+	        String code = lircButton.code;
+	        logger.error(signal.name() + " : " + code + " @ " + lircButton.remote);	
+		}
 	}
 }
