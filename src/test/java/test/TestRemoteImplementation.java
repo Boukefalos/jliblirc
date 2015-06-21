@@ -1,27 +1,23 @@
 package test;
 
+import java.util.Properties;
+
 import lirc.Lirc.Signal;
+import base.exception.LoaderException;
 import base.exception.worker.ActivateException;
 import base.work.Listen;
 
 import com.github.boukefalos.lirc.Lirc;
 import com.github.boukefalos.lirc.LircButton;
-import com.github.boukefalos.lirc.implementation.Local;
+import com.github.boukefalos.lirc.Loader;
+import com.github.boukefalos.lirc.Server;
 import com.github.boukefalos.lirc.util.SignalObject;
 
-public class TestLocal extends Listen<Object> {
-	
-	public static void main(String[] args) {
-		new TestLocal().start();
-		try {
-			Thread.sleep(1000000);
-		} catch (InterruptedException e) {}
-	}
-
+public class TestRemoteImplementation extends Listen<Object> {
 	protected Lirc lirc;
 
-	public TestLocal() {
-		lirc = new Local();
+	public TestRemoteImplementation(Loader loader) {
+		lirc = loader.getLirc();
 		lirc.register(this);
 	}
 
@@ -29,10 +25,6 @@ public class TestLocal extends Listen<Object> {
 		lirc.start();
         super.activate();        
     }
-
-	public void start() {
-		super.start();
-	}
 
 	public void input(SignalObject<LircButton> lircButtonSignal) {
 		 Object object = lircButtonSignal.object;
@@ -42,5 +34,19 @@ public class TestLocal extends Listen<Object> {
 	        String code = lircButton.code;
 	        logger.error(signal.name() + " : " + code + " @ " + lircButton.remote);	
 		}
+	}
+	
+	public static void main(Properties localProperties, Properties remoteProperties) throws LoaderException {
+		Loader localLoader = new Loader(localProperties);
+		Loader remoteLoader = new Loader(remoteProperties);
+
+		Server server = localLoader.getServer();		
+
+		server.start();
+		new TestRemoteImplementation(remoteLoader).start();
+
+		try {
+			Thread.sleep(1000000);
+		} catch (InterruptedException e) {}
 	}
 }

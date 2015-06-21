@@ -1,4 +1,4 @@
-package com.github.boukefalos.lirc.listen;
+package com.github.boukefalos.lirc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,17 +13,39 @@ import lirc.Lirc.DirectionButton;
 import lirc.Lirc.Number;
 import lirc.Lirc.NumberButton;
 import lirc.Lirc.Signal;
+import base.Control;
+import base.exception.worker.ActivateException;
+import base.exception.worker.DeactivateException;
 import base.sender.Sender;
 import base.work.Listen;
 
-import com.github.boukefalos.lirc.LircButton;
 import com.github.boukefalos.lirc.util.SignalObject;
 
-public class ServerListen extends Listen<Object> {
+public class Server extends Listen<Object> implements Control {
+	protected Lirc lirc;
 	protected Sender sender;
 
-	public ServerListen(Sender sender) {
+	public Server(Lirc lirc, Sender sender) {
+		this.lirc = lirc;
 		this.sender = sender;
+		lirc.register(this);
+	}
+
+	public void activate() throws ActivateException {
+		lirc.start();
+		sender.start();
+		super.activate();
+	}
+
+	public void deactivate() throws DeactivateException {
+		super.deactivate();
+		lirc.start();
+		sender.stop();
+	}
+
+	public void exit() {
+		lirc.exit();
+		sender.exit();
 	}
 
 	public void input(SignalObject<Object> signalObject) {

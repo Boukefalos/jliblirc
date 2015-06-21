@@ -33,12 +33,12 @@ import com.github.boukefalos.lirc.LircClient;
 import com.github.boukefalos.lirc.util.Multiplexer;
 import com.github.boukefalos.lirc.util.SignalObject;
 
-public class LocalImplementation extends Listen<Object> implements Lirc {
+public class Local extends Listen<Object> implements Lirc {
 	protected ArrayList<Listen<Object>> listenList;
     protected Multiplexer<String> multiplexer;
     protected LircClient lircClient;
 
-    public LocalImplementation() {
+    public Local() {
     	listenList = new ArrayList<Listen<Object>>();
         lircClient = new LircClient(this);
         multiplexer = new Multiplexer<String>();

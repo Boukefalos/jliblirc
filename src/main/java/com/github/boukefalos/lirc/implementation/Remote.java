@@ -1,7 +1,8 @@
-package com.github.boukefalos.server.helper;
+package com.github.boukefalos.lirc.implementation;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import lirc.Lirc.Button;
 import lirc.Lirc.Button.Type;
@@ -9,18 +10,40 @@ import lirc.Lirc.Color;
 import lirc.Lirc.Direction;
 import lirc.Lirc.Number;
 import lirc.Lirc.Signal;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import base.receiver.Forwarder;
+import base.server.forwarder.AbstractReceiver;
+import base.work.Listen;
 
 import com.github.boukefalos.lirc.Lirc;
 import com.github.boukefalos.lirc.LircButton;
 import com.github.boukefalos.lirc.util.SignalObject;
 
-public class ServerHelper {
-	protected static Logger logger = LoggerFactory.getLogger(ServerHelper.class);
+public class Remote extends AbstractReceiver implements Lirc {
+	protected ArrayList<Listen<Object>> listenList;
 
-	public static SignalObject<?> decode(Lirc lirc, byte[] buffer) {
+	public Remote(Forwarder forwarder) {
+		super(forwarder);
+    	listenList = new ArrayList<Listen<Object>>();
+	}
+
+	public void register(Listen<Object> listen) {
+		listenList.add(listen);		
+	}
+
+	public void remove(Listen<Object> listen) {
+		listenList.remove(listen);		
+	}
+
+	public void receive(byte[] buffer) {
+		Object object = decode(buffer);
+		if (object != null) {
+			for (Listen<Object> listen : listenList) {
+				listen.add(object);
+			}
+		}
+	}
+
+	public SignalObject<?> decode(byte[] buffer) {
 		ByteArrayInputStream input = new ByteArrayInputStream(buffer);
 		try {
 			Button button = Button.parseDelimitedFrom(input);

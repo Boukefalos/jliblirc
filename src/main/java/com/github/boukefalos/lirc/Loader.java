@@ -2,76 +2,59 @@ package com.github.boukefalos.lirc;
 
 import java.util.Properties;
 
-import org.picocontainer.Parameter;
-import org.picocontainer.parameters.ConstantParameter;
-
+import base.exception.LoaderException;
 import base.loader.AbstractLoader;
-import base.work.Work;
 
-import com.github.boukefalos.lirc.client.LircTcpClient;
-import com.github.boukefalos.lirc.implementation.LocalImplementation;
-import com.github.boukefalos.lirc.implementation.TcpImplementation;
-import com.github.boukefalos.lirc.implementation.UdpImplementation;
-import com.github.boukefalos.lirc.server.LircServer;
-import com.github.boukefalos.lirc.server.LircTcpServer;
-import com.github.boukefalos.lirc.server.LircUdpServer;
+import com.github.boukefalos.lirc.implementation.Local;
+import com.github.boukefalos.lirc.implementation.Remote;
 
-public class Loader extends AbstractLoader {
+public class Loader extends AbstractLoader<Loader> {
     protected static final String PROPERTIES_FILE = "lirc.properties";
 
-	public Loader(Properties properties) {
+	public Loader(Properties properties) throws LoaderException {
 		super();
-	
+
 		/* Add implementation */
 		switch (properties.getProperty("implementation")) {
 			case "local":
-				pico.addComponent(LocalImplementation.class);
+				pico.addComponent(Local.class);
 				break;				
 			case "remote":
-				//pico.addComponent(Remote.class);
-				break;
-		}
+				pico.addComponent(Remote.class);
 
-		/* Add protocol */
-		if (properties.getProperty("protocol") != null) {
-			switch (properties.getProperty("protocol")) {
-				case "tcp":
-					pico.addComponent(TcpImplementation.class, TcpImplementation.class, new Parameter[]{
-						new ConstantParameter(properties.getProperty("remote.host")),
-						new ConstantParameter(Integer.valueOf(properties.getProperty("remote.port")))});
-					break;
-				case "udp":
-					pico.addComponent(UdpImplementation.class, UdpImplementation.class, new Parameter[] {
-						new ConstantParameter(properties.getProperty("remote.host")),
-						new ConstantParameter(Integer.valueOf(properties.getProperty("remote.port")))});
-					break;
-			}
+				/* Add remote forwarder implementation */
+				try {
+					String protocol = properties.getOrDefault("server.protocol", "tcp").toString();
+					String implementation = properties.getOrDefault("tcp.implementation", "socket").toString();
+					int port = Integer.valueOf(properties.getProperty("remote.port"));
+					addForwarder(protocol, implementation, port);
+				} catch (NumberFormatException e) {
+					throw new LoaderException("Failed to parse remote.port");
+				}				
+				break;
 		}
 
 		/* Add server */
 		if (properties.getProperty("server") != null) {
-			switch (properties.getProperty("server.protocol")) {
-				case "tcp":
-					pico.addComponent(LircTcpServer.class, LircTcpServer.class, new Parameter[]{
-						new ConstantParameter(getLirc()),
-						new ConstantParameter(Integer.valueOf(properties.getProperty("server.port"))),
-						new ConstantParameter(LircTcpClient.class)});
-					break;
-				case "udp":
-					pico.addComponent(LircUdpServer.class, LircUdpServer.class, new Parameter[]{
-						new ConstantParameter(getLirc()),
-						new ConstantParameter(Integer.valueOf(properties.getProperty("server.port")))});
-			}
-			
+			pico.addComponent(Server.class);
+
+			/* Add sender implementation */
+			try {
+				String protocol = properties.getOrDefault("server.protocol", "tcp").toString();
+				String implementation = properties.getOrDefault("tcp.implementation", "socket").toString();
+				int port = Integer.valueOf(properties.getProperty("server.port"));
+				addSender(protocol, implementation, "localhost", port);
+			} catch (NumberFormatException e) {
+				throw new LoaderException("Failed to parse server.port");
+			}	
 		}
 	}
 
-    public Lirc getLirc() {
+	public Lirc getLirc() {
     	return pico.getComponent(Lirc.class);
     }
 
-    public Work getServer() {
-    	return (Work) pico.getComponent(LircServer.class);
+    public Server getServer() {
+    	return pico.getComponent(Server.class);
     }
-
 }
