@@ -14,9 +14,9 @@ import lirc.Lirc.Number;
 import lirc.Lirc.NumberButton;
 import lirc.Lirc.Signal;
 import base.Control;
+import base.Sender;
 import base.exception.worker.ActivateException;
 import base.exception.worker.DeactivateException;
-import base.sender.Sender;
 import base.work.Listen;
 
 import com.github.boukefalos.lirc.util.SignalObject;

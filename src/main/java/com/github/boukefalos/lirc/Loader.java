@@ -27,7 +27,7 @@ public class Loader extends AbstractLoader<Loader> {
 					String protocol = properties.getOrDefault("server.protocol", "tcp").toString();
 					String implementation = properties.getOrDefault("tcp.implementation", "socket").toString();
 					int port = Integer.valueOf(properties.getProperty("remote.port"));
-					addForwarder(protocol, implementation, port);
+					addServerForwarder(protocol, implementation, port);
 				} catch (NumberFormatException e) {
 					throw new LoaderException("Failed to parse remote.port");
 				}				
@@ -43,7 +43,7 @@ public class Loader extends AbstractLoader<Loader> {
 				String protocol = properties.getOrDefault("server.protocol", "tcp").toString();
 				String implementation = properties.getOrDefault("tcp.implementation", "socket").toString();
 				int port = Integer.valueOf(properties.getProperty("server.port"));
-				addSender(protocol, implementation, "localhost", port);
+				addServerSender(protocol, implementation, port);
 			} catch (NumberFormatException e) {
 				throw new LoaderException("Failed to parse server.port");
 			}	

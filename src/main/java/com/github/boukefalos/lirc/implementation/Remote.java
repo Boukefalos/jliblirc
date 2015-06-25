@@ -10,8 +10,8 @@ import lirc.Lirc.Color;
 import lirc.Lirc.Direction;
 import lirc.Lirc.Number;
 import lirc.Lirc.Signal;
-import base.receiver.Forwarder;
-import base.server.forwarder.AbstractReceiver;
+import base.Forwarder;
+import base.server.receiver.AbstractReceiver;
 import base.work.Listen;
 
 import com.github.boukefalos.lirc.Lirc;

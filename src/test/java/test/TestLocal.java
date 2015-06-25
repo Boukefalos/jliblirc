@@ -9,8 +9,7 @@ import com.github.boukefalos.lirc.LircButton;
 import com.github.boukefalos.lirc.implementation.Local;
 import com.github.boukefalos.lirc.util.SignalObject;
 
-public class TestLocal extends Listen<Object> {
-	
+public class TestLocal extends Listen<Object> {	
 	public static void main(String[] args) {
 		new TestLocal().start();
 		try {
