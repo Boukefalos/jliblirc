@@ -9,37 +9,37 @@ import com.github.boukefalos.lirc.LircButton;
 import com.github.boukefalos.lirc.implementation.Local;
 import com.github.boukefalos.lirc.util.SignalObject;
 
-public class TestLocal extends Listen<Object> {	
-	public static void main(String[] args) {
-		new TestLocal().start();
-		try {
-			Thread.sleep(1000000);
-		} catch (InterruptedException e) {}
-	}
+public class TestLocal extends Listen<Object> {    
+    public static void main(String[] args) {
+        new TestLocal().start();
+        try {
+            Thread.sleep(1000000);
+        } catch (InterruptedException e) {}
+    }
 
-	protected Lirc lirc;
+    protected Lirc lirc;
 
-	public TestLocal() {
-		lirc = new Local();
-		lirc.register(this);
-	}
+    public TestLocal() {
+        lirc = new Local();
+        lirc.register(this);
+    }
 
     public void activate() throws ActivateException {
-		lirc.start();
+        lirc.start();
         super.activate();        
     }
 
-	public void start() {
-		super.start();
-	}
+    public void start() {
+        super.start();
+    }
 
-	public void input(SignalObject<LircButton> lircButtonSignal) {
-		 Object object = lircButtonSignal.object;
-		if (object instanceof LircButton) {
-			Signal signal = lircButtonSignal.signal;
-			LircButton lircButton = lircButtonSignal.object;
-	        String code = lircButton.code;
-	        logger.error(signal.name() + " : " + code + " @ " + lircButton.remote);	
-		}
-	}
+    public void input(SignalObject<LircButton> lircButtonSignal) {
+         Object object = lircButtonSignal.object;
+        if (object instanceof LircButton) {
+            Signal signal = lircButtonSignal.signal;
+            LircButton lircButton = lircButtonSignal.object;
+            String code = lircButton.code;
+            logger.error(signal.name() + " : " + code + " @ " + lircButton.remote);    
+        }
+    }
 }

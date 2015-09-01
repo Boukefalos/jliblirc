@@ -19,55 +19,55 @@ import com.github.boukefalos.lirc.LircButton;
 import com.github.boukefalos.lirc.util.SignalObject;
 
 public class Remote extends AbstractReceiver implements Lirc {
-	protected ArrayList<Listen<Object>> listenList;
+    protected ArrayList<Listen<Object>> listenList;
 
-	public Remote(Forwarder forwarder) {
-		super(forwarder);
-    	listenList = new ArrayList<Listen<Object>>();
-	}
+    public Remote(Forwarder forwarder) {
+        super(forwarder);
+        listenList = new ArrayList<Listen<Object>>();
+    }
 
-	public void register(Listen<Object> listen) {
-		listenList.add(listen);		
-	}
+    public void register(Listen<Object> listen) {
+        listenList.add(listen);        
+    }
 
-	public void remove(Listen<Object> listen) {
-		listenList.remove(listen);		
-	}
+    public void remove(Listen<Object> listen) {
+        listenList.remove(listen);        
+    }
 
-	public void receive(byte[] buffer) {
-		Object object = decode(buffer);
-		if (object != null) {
-			for (Listen<Object> listen : listenList) {
-				listen.add(object);
-			}
-		}
-	}
+    public void receive(byte[] buffer) {
+        Object object = decode(buffer);
+        if (object != null) {
+            for (Listen<Object> listen : listenList) {
+                listen.add(object);
+            }
+        }
+    }
 
-	public SignalObject<?> decode(byte[] buffer) {
-		ByteArrayInputStream input = new ByteArrayInputStream(buffer);
-		try {
-			Button button = Button.parseDelimitedFrom(input);
-			Type type = button.getType();
-			Signal signal = button.getSignal();
-			switch (type) {
-				case COLOR:
-					Color color = button.getColorButton().getColor();
-					return new SignalObject<Color>(signal, color);
-				case DIRECTION:
-					Direction direction = button.getDirectionButton().getDirection();
-					return new SignalObject<Direction>(signal, direction);
-				case NUMBER:
-					Number number = button.getNumberButton().getNumber();
-					return new SignalObject<Number>(signal, number);
-				case LIRC:
-					String remote = button.getLircButton().getRemote();
-					String code = button.getLircButton().getCode();
-					LircButton lircButton = new LircButton(remote, code);
-					return new SignalObject<LircButton>(signal, lircButton);
-			}
-		} catch (IOException e) {
-			logger.error("Failed to parse input");
-		}
-		return null;
-	}
+    public SignalObject<?> decode(byte[] buffer) {
+        ByteArrayInputStream input = new ByteArrayInputStream(buffer);
+        try {
+            Button button = Button.parseDelimitedFrom(input);
+            Type type = button.getType();
+            Signal signal = button.getSignal();
+            switch (type) {
+                case COLOR:
+                    Color color = button.getColorButton().getColor();
+                    return new SignalObject<Color>(signal, color);
+                case DIRECTION:
+                    Direction direction = button.getDirectionButton().getDirection();
+                    return new SignalObject<Direction>(signal, direction);
+                case NUMBER:
+                    Number number = button.getNumberButton().getNumber();
+                    return new SignalObject<Number>(signal, number);
+                case LIRC:
+                    String remote = button.getLircButton().getRemote();
+                    String code = button.getLircButton().getCode();
+                    LircButton lircButton = new LircButton(remote, code);
+                    return new SignalObject<LircButton>(signal, lircButton);
+            }
+        } catch (IOException e) {
+            logger.error("Failed to parse input");
+        }
+        return null;
+    }
 }

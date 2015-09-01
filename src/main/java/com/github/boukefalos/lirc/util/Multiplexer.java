@@ -30,7 +30,7 @@ public class Multiplexer<T> {
 
     protected int timeout;
     protected ArrayList<Listen<Object>> listenList;
-	protected ScheduledExecutorService executor;
+    protected ScheduledExecutorService executor;
     protected HashMap<T,Integer> counterMap;
 
     public Multiplexer() {
@@ -38,63 +38,63 @@ public class Multiplexer<T> {
     }
 
     public Multiplexer(int timeout) {
-    	this.timeout = timeout;
-    	listenList = new ArrayList<Listen<Object>>();
+        this.timeout = timeout;
+        listenList = new ArrayList<Listen<Object>>();
         executor = Executors.newSingleThreadScheduledExecutor();
         counterMap = new HashMap<T,Integer>();
     }
 
     public void register(Listen<Object> listen) {
-    	listenList.add(listen);
+        listenList.add(listen);
     }
 
     public void remove(Listen<SignalObject<T>> listen) {
-    	listenList.remove(listen);
+        listenList.remove(listen);
     }
 
-	public synchronized void add(T object) {    	
-		Expire expire = new Expire(this, object);
-		executor.schedule(expire, (long) timeout, TimeUnit.MILLISECONDS);
-    	int counter = counterMap.getOrDefault(object, 0);
-    	if (counter == 0) {
-    		for (Listen<Object> listen : listenList) {
-    			listen.add(new SignalObject<T>(Signal.BEGIN, object));
-    		}
-    	}
-		counterMap.put(object, counter + 1);
+    public synchronized void add(T object) {        
+        Expire expire = new Expire(this, object);
+        executor.schedule(expire, (long) timeout, TimeUnit.MILLISECONDS);
+        int counter = counterMap.getOrDefault(object, 0);
+        if (counter == 0) {
+            for (Listen<Object> listen : listenList) {
+                listen.add(new SignalObject<T>(Signal.BEGIN, object));
+            }
+        }
+        counterMap.put(object, counter + 1);
     }
 
-	protected synchronized void expire(T object) {
-		int counter = counterMap.get(object);
-		counterMap.put(object, counter - 1);
-		if (counter == 1) {
-    		for (Listen<Object> listen : listenList) {
-    			listen.add(new SignalObject<T>(Signal.END, object));
-    		}
-		}
-	}
+    protected synchronized void expire(T object) {
+        int counter = counterMap.get(object);
+        counterMap.put(object, counter - 1);
+        if (counter == 1) {
+            for (Listen<Object> listen : listenList) {
+                listen.add(new SignalObject<T>(Signal.END, object));
+            }
+        }
+    }
 
-	public class Expire implements Runnable {
-		protected Multiplexer<T> multiplexer;
-		protected T object;
+    public class Expire implements Runnable {
+        protected Multiplexer<T> multiplexer;
+        protected T object;
 
-		public Expire(Multiplexer<T> multiplexer, T object) {
-			this.multiplexer = multiplexer;
-			this.object = object;
-		}
+        public Expire(Multiplexer<T> multiplexer, T object) {
+            this.multiplexer = multiplexer;
+            this.object = object;
+        }
 
-		public void run() {
-			multiplexer.expire(object);
-		}		
-	}
+        public void run() {
+            multiplexer.expire(object);
+        }        
+    }
 
-	public void stop() {
-		executor.shutdown();
-		
-	}
-	
-	public void exit() {
-		stop();
-		// Should cancel all scheduled Runnables
-	}
+    public void stop() {
+        executor.shutdown();
+        
+    }
+    
+    public void exit() {
+        stop();
+        // Should cancel all scheduled Runnables
+    }
 }

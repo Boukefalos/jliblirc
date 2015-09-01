@@ -22,19 +22,19 @@ import base.server.channel.TcpClient;
 import base.work.Listen;
 
 public class LircClient extends TcpClient {
-	public static final int BUFFER_SIZE = 1024;
+    public static final int BUFFER_SIZE = 1024;
     public static final String IP = "localhost";
     public static final int PORT = 8765;
     protected String send;
-	protected Listen<Object> listen;
+    protected Listen<Object> listen;
 
     public LircClient(Listen<Object> listen) {
-    	super(IP, PORT, BUFFER_SIZE);
+        super(IP, PORT, BUFFER_SIZE);
         //send = Native.getValue(Registry.CURRENT_USER, "Software\\LIRC", "password");
-		this.listen = listen;
-	}
+        this.listen = listen;
+    }
 
-	public void send(LircButton button) {
+    public void send(LircButton button) {
         send(button, 0);
     }
 
@@ -44,13 +44,13 @@ public class LircClient extends TcpClient {
         }
         String command = String.format("%s %s %s \n", send, lircButton.remote, lircButton.code);
         try {
-			send(command.getBytes());
-		} catch (IOException e) {
-			logger.error("", e);
-		}
+            send(command.getBytes());
+        } catch (IOException e) {
+            logger.error("", e);
+        }
     }
 
     public void input(byte[] buffer) {
-    	listen.add(buffer);
+        listen.add(buffer);
     }
 }

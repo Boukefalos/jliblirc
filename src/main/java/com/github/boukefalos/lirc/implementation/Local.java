@@ -34,27 +34,27 @@ import com.github.boukefalos.lirc.util.Multiplexer;
 import com.github.boukefalos.lirc.util.SignalObject;
 
 public class Local extends Listen<Object> implements Lirc {
-	protected ArrayList<Listen<Object>> listenList;
+    protected ArrayList<Listen<Object>> listenList;
     protected Multiplexer<String> multiplexer;
     protected LircClient lircClient;
 
     public Local() {
-    	listenList = new ArrayList<Listen<Object>>();
+        listenList = new ArrayList<Listen<Object>>();
         lircClient = new LircClient(this);
         multiplexer = new Multiplexer<String>();
         multiplexer.register(this);
     }
 
-	public void register(Listen<Object> listen) {
-		listenList.add(listen);		
-	}
+    public void register(Listen<Object> listen) {
+        listenList.add(listen);        
+    }
 
     public void remove(Listen<Object> listen) {
         listenList.remove(listen);
     }
 
     public void activate() throws ActivateException {
-    	lircClient.start();
+        lircClient.start();
         super.activate();        
     }
 
@@ -70,54 +70,54 @@ public class Local extends Listen<Object> implements Lirc {
         multiplexer.exit();
     }
 
-	public void input(byte[] buffer) {
-		String line = new String(buffer).trim();
-        if (!line.startsWith("BEGIN")) {        	
-        	Scanner scanner = new Scanner(line);
+    public void input(byte[] buffer) {
+        String line = new String(buffer).trim();
+        if (!line.startsWith("BEGIN")) {            
+            Scanner scanner = new Scanner(line);
             scanner.next();
             scanner.next();
             String code = scanner.next();
             String remote = scanner.next();
 
-        	// Need to pass as String to assure consistent hash
-        	multiplexer.add(remote + " " + code);
-        	scanner.close();
+            // Need to pass as String to assure consistent hash
+            multiplexer.add(remote + " " + code);
+            scanner.close();
         }
-	}
+    }
 
-	public void input(SignalObject<Object> signalObject) {
-		Object object = signalObject.object;
-		if (object instanceof String) {
-			// Translate String signal objects to LircButton signalObjects
-			String[] input = ((String) object).split(" ");
-			LircButton lircButton = new LircButton(input[0], input[1]);
-			signalObject = new SignalObject<Object>(signalObject.signal, lircButton);
-			otherParsings(signalObject.signal, input[1].toUpperCase());
-		}
-		// Pass signalObject to listens
+    public void input(SignalObject<Object> signalObject) {
+        Object object = signalObject.object;
+        if (object instanceof String) {
+            // Translate String signal objects to LircButton signalObjects
+            String[] input = ((String) object).split(" ");
+            LircButton lircButton = new LircButton(input[0], input[1]);
+            signalObject = new SignalObject<Object>(signalObject.signal, lircButton);
+            otherParsings(signalObject.signal, input[1].toUpperCase());
+        }
+        // Pass signalObject to listens
         for (Listen<Object> listen : listenList) {
-        	listen.add(signalObject);
+            listen.add(signalObject);
         }
-	}
+    }
 
-	protected void otherParsings(Signal signal, String code) {
+    protected void otherParsings(Signal signal, String code) {
         for (Color color : Color.values()) {
             if (color.toString().equals(code)) {
-            	add(new SignalObject<Color>(signal, color));
+                add(new SignalObject<Color>(signal, color));
             }
         }
         for (Number number : Number.values()) {
             if (number.toString().equals(code)) {
-            	add(new SignalObject<Number>(signal, number));
+                add(new SignalObject<Number>(signal, number));
             }
         }
         for (Direction direction : Direction.values()) {
             if (direction.toString().equals(code)) {
-            	add(new SignalObject<Direction>(signal, direction));
+                add(new SignalObject<Direction>(signal, direction));
             }
         }
         try {
-        	add(new SignalObject<Number>(signal, Number.valueOf(Integer.valueOf(code))));
+            add(new SignalObject<Number>(signal, Number.valueOf(Integer.valueOf(code))));
         } catch (NumberFormatException e) {}
-	}
+    }
 }

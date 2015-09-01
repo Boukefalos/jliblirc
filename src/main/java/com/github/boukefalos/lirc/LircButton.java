@@ -20,12 +20,12 @@ public class LircButton {
     public String remote;
     public String code;
 
-	public LircButton(String remote, String code) {
-		this.remote = remote;
-		this.code = code;
-	}
+    public LircButton(String remote, String code) {
+        this.remote = remote;
+        this.code = code;
+    }
 
-	public lirc.Lirc.LircButton getProto() {
-		return lirc.Lirc.LircButton.newBuilder().setRemote(remote).setCode(code).build();
-	}
+    public lirc.Lirc.LircButton getProto() {
+        return lirc.Lirc.LircButton.newBuilder().setRemote(remote).setCode(code).build();
+    }
 }
