@@ -23,6 +23,7 @@ import lirc.Lirc.Color;
 import lirc.Lirc.Direction;
 import lirc.Lirc.Number;
 import lirc.Lirc.Signal;
+
 import base.exception.worker.ActivateException;
 import base.exception.worker.DeactivateException;
 import base.work.Listen;

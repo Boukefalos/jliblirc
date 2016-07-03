@@ -25,7 +25,7 @@ public class LircButton {
         this.code = code;
     }
 
-    public lirc.Lirc.LircButton getProto() {
+    public  lirc.Lirc.LircButton getProto() {
         return lirc.Lirc.LircButton.newBuilder().setRemote(remote).setCode(code).build();
     }
 }
