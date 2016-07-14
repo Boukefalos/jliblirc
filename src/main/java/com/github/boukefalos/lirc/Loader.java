@@ -2,11 +2,11 @@ package com.github.boukefalos.lirc;
 
 import java.util.Properties;
 
-import base.exception.LoaderException;
-import base.loader.AbstractLoader;
-
 import com.github.boukefalos.lirc.implementation.Local;
 import com.github.boukefalos.lirc.implementation.Remote;
+
+import base.exception.LoaderException;
+import base.loader.AbstractLoader;
 
 public class Loader extends AbstractLoader<Loader> {
     protected static final String PROPERTIES_FILE = "lirc.properties";

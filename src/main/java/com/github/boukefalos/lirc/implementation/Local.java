@@ -27,6 +27,7 @@ import lirc.Lirc.Signal;
 import base.exception.worker.ActivateException;
 import base.exception.worker.DeactivateException;
 import base.work.Listen;
+import base.work.ReflectiveListen;
 
 import com.github.boukefalos.lirc.Lirc;
 import com.github.boukefalos.lirc.LircButton;
@@ -34,7 +35,7 @@ import com.github.boukefalos.lirc.LircClient;
 import com.github.boukefalos.lirc.util.Multiplexer;
 import com.github.boukefalos.lirc.util.SignalObject;
 
-public class Local extends Listen<Object> implements Lirc {
+public class Local extends ReflectiveListen implements Lirc {
     protected ArrayList<Listen<Object>> listenList;
     protected Multiplexer<String> multiplexer;
     protected LircClient lircClient;

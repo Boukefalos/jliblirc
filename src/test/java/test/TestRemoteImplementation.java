@@ -2,18 +2,18 @@ package test;
 
 import java.util.Properties;
 
-import lirc.Lirc.Signal;
-import base.exception.LoaderException;
-import base.exception.worker.ActivateException;
-import base.work.Listen;
-
 import com.github.boukefalos.lirc.Lirc;
 import com.github.boukefalos.lirc.LircButton;
 import com.github.boukefalos.lirc.Loader;
 import com.github.boukefalos.lirc.Server;
 import com.github.boukefalos.lirc.util.SignalObject;
 
-public class TestRemoteImplementation extends Listen<Object> {
+import base.exception.LoaderException;
+import base.exception.worker.ActivateException;
+import base.work.ReflectiveListen;
+import lirc.Lirc.Signal;
+
+public class TestRemoteImplementation extends ReflectiveListen {
     protected Lirc lirc;
 
     public TestRemoteImplementation(Loader loader) {
@@ -36,7 +36,7 @@ public class TestRemoteImplementation extends Listen<Object> {
         }
     }
     
-    public static void main(Properties localProperties, Properties remoteProperties) throws LoaderException {
+    public static void main(Properties localProperties, Properties remoteProperties) throws  LoaderException  {
         Loader localLoader = new Loader(localProperties);
         Loader remoteLoader = new Loader(remoteProperties);
 

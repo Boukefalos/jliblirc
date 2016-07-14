@@ -77,4 +77,8 @@ public class Server extends Listen<Object> implements Control {
             logger.error("Failed to send command");
         }        
     }
+
+	public void input(Object object) {
+		logger.debug("", object);		
+	}
 }

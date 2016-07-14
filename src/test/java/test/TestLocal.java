@@ -1,15 +1,15 @@
 package test;
 
-import lirc.Lirc.Signal;
-import base.exception.worker.ActivateException;
-import base.work.Listen;
-
 import com.github.boukefalos.lirc.Lirc;
 import com.github.boukefalos.lirc.LircButton;
 import com.github.boukefalos.lirc.implementation.Local;
 import com.github.boukefalos.lirc.util.SignalObject;
 
-public class TestLocal extends Listen<Object> {    
+import base.exception.worker.ActivateException;
+import base.work.ReflectiveListen;
+import lirc.Lirc.Signal;
+
+public class TestLocal extends ReflectiveListen {    
     public static void main(String[] args) {
         new TestLocal().start();
         try {

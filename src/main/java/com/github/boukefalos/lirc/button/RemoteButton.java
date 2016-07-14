@@ -1,5 +1,7 @@
 package com.github.boukefalos.lirc.button;
 
-public interface RemoteButton {
+import mimis.input.Button;
+
+public interface RemoteButton extends Button {
 
 }
